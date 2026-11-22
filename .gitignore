@@ -27,3 +27,8 @@ infra/environments/*.tfvars
 !infra/environments/*.tfvars.example
 infra/.terraform.lock.hcl
 infra/crash.log
+
+### Data / build ###
+.data/
+web/node_modules/
+web/dist/

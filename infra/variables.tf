@@ -1,11 +1,11 @@
 variable "aws_region" {
   type    = string
-  default = "us-east-1"
+  default = "us-east-2"
 }
 
 variable "app_name" {
   type    = string
-  default = "template-backend-python"
+  default = "ml-purchase-prediction"
 }
 
 variable "environment" {
@@ -21,14 +21,39 @@ variable "image_tag" {
 }
 
 variable "memory_size" {
-  type    = number
-  default = 512
+  type        = number
+  description = "MB. 1024 gives the CPU share that keeps pandas/scikit-learn cold starts ~3s."
+  default     = 1024
 }
 
 variable "timeout" {
   type        = number
-  description = "Seconds. Response streaming raises the practical ceiling to 15 min if a request needs it."
-  default     = 30
+  description = "Seconds. A prediction takes ~20ms warm; this only bounds a stuck request."
+  default     = 15
+}
+
+variable "throttle_rate_per_second" {
+  type        = number
+  description = "Steady-state requests/second across ALL callers (API Gateway stage throttle)."
+  default     = 5
+}
+
+variable "throttle_burst" {
+  type        = number
+  description = "Short burst allowance above the steady rate. Keeps concurrent Lambdas to a handful."
+  default     = 10
+}
+
+variable "cors_allowed_origins" {
+  type        = list(string)
+  description = "Browser origins allowed to call the demo API: the portfolio + this repo's GitHub Pages."
+  default = [
+    "https://srikarbolleddu.com",
+    "https://www.srikarbolleddu.com",
+    "https://srikarbolleddu.github.io",
+    "http://localhost:3000",
+    "http://localhost:5173",
+  ]
 }
 
 variable "github_oidc_provider_arn" {

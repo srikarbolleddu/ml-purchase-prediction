@@ -6,3 +6,10 @@ app.egg-info
 .coverage
 htmlcov
 .venv
+.data
+.git
+tests
+training
+reports
+web
+infra

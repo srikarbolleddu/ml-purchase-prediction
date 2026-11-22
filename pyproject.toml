@@ -1,85 +1,64 @@
 [project]
-name = "template-backend-python"
+name = "ml-purchase-prediction"
 version = "0.1.0"
-description = ""
-requires-python = ">=3.13,<4.0"
+description = "Term-deposit purchase prediction: a pruned decision tree served as a live demo API."
+requires-python = ">=3.13,<3.14"
+# Runtime (inference) dependencies only -- this is what ships in the Lambda image.
 dependencies = [
-    "fastapi[standard]>=0.141.1,<1.0.0",
+    "fastapi>=0.141.1,<1.0.0",
     "mangum>=0.19.0,<1.0.0",
-    "anthropic>=0.80.0,<1.0.0",
-    "python-multipart<1.0.0,>=0.0.27",
-    "email-validator<3.0.0.0,>=2.1.0.post1",
-    "tenacity<10.0.0,>=8.2.3",
-    "pydantic>2.0",
-    "emails>=1.1.2,<2.0",
-    "jinja2<4.0.0,>=3.1.4",
-    "alembic<2.0.0,>=1.12.1",
-    "httpx<1.0.0,>=0.25.1",
-    "psycopg[binary]>=3.3.4,<4.0.0",
-    "sqlmodel>=0.0.39,<1.0.0",
-    "pydantic-settings<3.0.0,>=2.2.1",
-    "sentry-sdk[fastapi]>=2.66.1,<3.0.0",
-    "pyjwt<3.0.0,>=2.13.0",
-    "pwdlib[argon2,bcrypt]>=0.3.0",
+    "pydantic>=2.10,<3.0",
+    "pydantic-settings>=2.2.1,<3.0.0",
+    "numpy>=2.1,<3.0",
+    "pandas>=2.2,<3.0",
+    "scikit-learn>=1.6,<1.8",
+    "skops>=0.11,<1.0",
 ]
 
 [dependency-groups]
 dev = [
-    "pytest<10.0.0,>=7.4.3",
-    "mypy<3.0.0,>=1.8.0",
+    "pytest>=8.0,<10.0.0",
+    "httpx>=0.27,<1.0.0",
     "ty>=0.0.25",
-    "ruff<1.0.0,>=0.2.2",
-    "coverage<8.0.0,>=7.4.3",
+    "ruff>=0.9,<1.0.0",
+    "coverage>=7.4.3,<8.0.0",
+    "bandit>=1.8",
+    "pip-audit>=2.7",
+    "uvicorn>=0.32",
 ]
+# Training-only: never installed into the Lambda image.
+train = [
+    "matplotlib>=3.9",
+]
+
+[tool.uv]
+default-groups = ["dev", "train"]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.mypy]
-strict = true
-exclude = ["venv", ".venv", "alembic"]
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
 
 [tool.ruff]
 target-version = "py313"
-exclude = ["alembic"]
+line-length = 100
 
 [tool.ruff.lint]
-select = [
-    "E",  # pycodestyle errors
-    "W",  # pycodestyle warnings
-    "F",  # pyflakes
-    "I",  # isort
-    "B",  # flake8-bugbear
-    "C4",  # flake8-comprehensions
-    "UP",  # pyupgrade
-    "ARG001", # unused arguments in functions
-    "T201",   # print statements are not allowed
-]
-ignore = [
-    "E501",  # line too long, handled by black
-    "B008",  # do not perform function calls in argument defaults
-    "W191",  # indentation contains tabs
-    "B904",  # Allow raising exceptions without from e, for HTTPException
-]
+select = ["E", "W", "F", "I", "B", "C4", "UP", "ARG001", "T201"]
+ignore = ["B008"]
 
-[tool.ruff.lint.pyupgrade]
-# Preserve types, even if a file imports `from __future__ import annotations`.
-keep-runtime-typing = true
+[tool.ruff.lint.per-file-ignores]
+"training/*" = ["T201"]
+"scripts/*" = ["T201"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [tool.coverage.run]
 source = ["app"]
-dynamic_context = "test_function"
 
 [tool.coverage.report]
 show_missing = true
-sort = "-Cover"
-
-[tool.coverage.html]
-show_contexts = true
-
-[tool.ty.terminal]
-error-on-warning = true
-
-[tool.fastapi]
-entrypoint = "app.main:app"
+fail_under = 90

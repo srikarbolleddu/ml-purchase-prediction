@@ -1,23 +1,23 @@
-# template-backend-python
+# ml-purchase-prediction
 
-FastAPI backend (Python 3.13), based on tiangolo/full-stack-fastapi-template's backend half. Deploys to AWS Lambda via Terraform (`infra/`) — see `infra/README.md` before the first deploy. Recommended template for ML/AI-heavy apps.
+Term-deposit purchase prediction (UCI Bank Marketing, CC BY 4.0) served as a public demo API, plus
+a standalone demo UI in `web/`. Rebuilt from a UT Austin PGP-AIML capstone methodology on open data
+-- never commit course datasets or notebooks.
 
-## Stack
+## Layout
+- `app/features.py` -- single source of truth for input fields + cleaning; used by training AND serving.
+- `app/model.py` -- skops loading (fails closed on unexpected types), prediction, decision-path text.
+- `app/api/main.py` -- `/schema`, `/samples`, `/explore`, `/predict`; `app/main.py` -- body cap, rate limit, CORS.
+- `training/train.py` -- reproducible training; regenerates `app/model_artifacts/` and `reports/`.
+- `web/` -- Vite + React demo UI (GitHub Pages).
 
-- FastAPI + SQLModel + Alembic migrations, Postgres, JWT auth already wired
-- Package/env management: `uv` (not pip/poetry directly)
-- Local run: `docker compose up -d db mailpit && uv run fastapi dev app/main.py`
-- Tests: `uv run bash scripts/tests-start.sh` (pytest + coverage, threshold 90%)
-- Lint/format: `uv run bash scripts/lint.sh`, `uv run bash scripts/format.sh` (ruff + mypy)
-- Health check: `GET /health`
+## Commands
+- `uv sync` · `uv run python training/train.py` · `uv run fastapi dev app/main.py`
+- Checks: `uv run ruff check . && uv run ruff format --check . && uv run ty check && uv run coverage run -m pytest && uv run coverage report && uv run bandit -q -r app training && uv run pip-audit --skip-editable`
+- Lambda image: `docker build -f Dockerfile.lambda -t demo . && docker run -p 9000:8080 demo` then `python3 scripts/smoke_lambda.py http://localhost:9000`
 
-## Spec-driven development
-
-Real features go through `/feature-dev`. Save its Discovery output to `specs/<feature-slug>/spec.md` and its chosen Architecture to `specs/<feature-slug>/plan.md` before implementation starts — see `specs/README.md`. Skip this ceremony for trivial, single-file changes.
-
-## Conventions
-
-- Routes in `app/api/`, DB models in `app/models.py` (SQLModel), business logic doesn't belong in route handlers for anything non-trivial.
-- New AWS permissions go on `aws_iam_role.lambda_exec` in `infra/main.tf` as a named, least-privilege statement — never a wildcard.
-- Claude API calls go through `app/core/claude_client.py` (server-side only — never expose the API key to a client). See that file for the pattern.
-- Don't hand-edit `infra/` Terraform freehand for anything beyond small variable tweaks — for new infrastructure, use the `terraform-aws-deploy` skill so it stays consistent with the other apps built from these templates.
+## Rules
+- Numbers quoted anywhere (README, portfolio, blog) come from `reports/metrics.json` only.
+- Retraining changes the model: commit the regenerated artifacts + reports together; golden tests must pass.
+- Public demo: no secrets in code; abuse limits are API Gateway throttling (`infra/`) + body cap + rate limit.
+- Infra changes go through the `terraform-aws-deploy` skill and `infra-reviewer` before `apply`.
