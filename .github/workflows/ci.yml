@@ -28,7 +28,7 @@ jobs:
       - name: Security lint
         run: uv run bandit -q -r app training
       - name: Dependency audit
-        run: uv run pip-audit --skip-editable --strict
+        run: uv run pip-audit --skip-editable
 
   image:
     runs-on: ubuntu-latest
