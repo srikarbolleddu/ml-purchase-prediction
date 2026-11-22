@@ -16,11 +16,11 @@ resource "aws_iam_role" "deploy" {
       Principal = { Federated = data.aws_iam_openid_connect_provider.github.arn }
       Action    = "sts:AssumeRoleWithWebIdentity"
       Condition = {
+        # Only jobs running in this repo's `production` GitHub environment (which requires the
+        # owner's approval) can assume the role -- not PRs, forks or other workflows.
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-        }
-        StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:${var.github_repo}:*"
+          "token.actions.githubusercontent.com:sub" = "repo:${var.github_repo}:environment:production"
         }
       }
     }]
@@ -55,7 +55,7 @@ resource "aws_iam_role_policy" "deploy" {
       {
         Sid      = "LambdaDeploy"
         Effect   = "Allow"
-        Action   = ["lambda:UpdateFunctionCode", "lambda:GetFunction"]
+        Action   = ["lambda:UpdateFunctionCode", "lambda:GetFunction", "lambda:GetFunctionConfiguration"]
         Resource = aws_lambda_function.app.arn
       },
     ]

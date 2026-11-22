@@ -1,5 +1,6 @@
-output "function_url" {
-  value = aws_lambda_function_url.app.function_url
+output "api_url" {
+  description = "Public demo API base URL (set as NEXT_PUBLIC_DEMO_PURCHASE_API_URL in the portfolio)"
+  value       = aws_apigatewayv2_stage.default.invoke_url
 }
 
 output "ecr_repository_url" {

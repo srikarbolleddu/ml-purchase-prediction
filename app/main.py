@@ -1,38 +1,61 @@
-import sentry_sdk
-from fastapi import FastAPI
-from fastapi.routing import APIRoute
+import time
+from collections import defaultdict, deque
+
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 
 from app.api.main import api_router
 from app.core.config import settings
 
-
-def custom_generate_unique_id(route: APIRoute) -> str:
-    return f"{route.tags[0]}-{route.name}"
-
-
-if settings.SENTRY_DSN and settings.FASTAPI_ENV != "development":
-    sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
-
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
-    generate_unique_id_function=custom_generate_unique_id,
+    docs_url=f"{settings.API_V1_STR}/docs",
 )
 
-# Pure API backend — the frontend (unified Expo/React Native Web app) is a
-# separate repo/deployment, not served from here.
+_hits: dict[str, deque[float]] = defaultdict(deque)
+
+
+def _client_ip(request: Request) -> str:
+    # Lambda Function URLs put the caller's address first in X-Forwarded-For.
+    forwarded = request.headers.get("x-forwarded-for", "")
+    return forwarded.split(",")[0].strip() or (request.client.host if request.client else "?")
+
+
+@app.middleware("http")
+async def guard(request: Request, call_next):  # noqa: ANN001, ANN201 - Starlette signature
+    """Reject oversized bodies and over-eager clients before any model work happens."""
+    length = request.headers.get("content-length")
+    if length is not None and (not length.isdigit() or int(length) > settings.MAX_BODY_BYTES):
+        return JSONResponse({"detail": "Request body too large."}, status_code=413)
+
+    if request.method == "POST":
+        now = time.monotonic()
+        window = _hits[_client_ip(request)]
+        while window and now - window[0] > 60:
+            window.popleft()
+        if len(window) >= settings.RATE_LIMIT_PER_MINUTE:
+            return JSONResponse(
+                {"detail": "Too many requests, please slow down."},
+                status_code=429,
+                headers={"Retry-After": "60"},
+            )
+        window.append(now)
+    return await call_next(request)
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_HOST],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_methods=["GET", "POST"],
+    allow_headers=["content-type"],
+    max_age=600,
 )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 
-@app.get("/health", tags=["health"])
+@app.get(f"{settings.API_V1_STR}/health", tags=["health"])
 def health() -> dict[str, str]:
     return {"status": "ok"}

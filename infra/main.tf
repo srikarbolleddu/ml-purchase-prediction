@@ -79,24 +79,63 @@ resource "aws_lambda_function" "app" {
 
   environment {
     variables = {
-      FASTAPI_ENV = var.environment == "dev" ? "development" : "production"
+      # pydantic-settings parses list values from JSON.
+      ALLOWED_ORIGINS = jsonencode(var.cors_allowed_origins)
     }
   }
 
   depends_on = [aws_cloudwatch_log_group.app]
 }
 
-# Public HTTPS endpoint with response streaming — the simplest way to get a
-# streaming-capable public URL for AI-agent/chat endpoints without standing
-# up a separate API Gateway. CORS is handled here rather than in app code.
-resource "aws_lambda_function_url" "app" {
-  function_name      = aws_lambda_function.app.function_name
-  authorization_type = "NONE"
-  invoke_mode        = "RESPONSE_STREAM"
+# --- Public HTTPS endpoint: API Gateway HTTP API (not a raw Function URL) ---
+# The gateway's stage throttling is the hard abuse ceiling for this public demo. Reserved
+# concurrency can't be used: this account's Lambda concurrency limit is 10, all of which must stay
+# unreserved -- and that pool is shared with the portfolio's own services, so the demo must never
+# be able to saturate it.
 
-  cors {
-    allow_origins = ["*"] # tighten to the real frontend origin(s) once known
-    allow_methods = ["*"]
-    allow_headers = ["*"]
+resource "aws_apigatewayv2_api" "http" {
+  name          = local.name
+  protocol_type = "HTTP"
+
+  # A browser courtesy, not access control: the throttling below is what limits callers.
+  cors_configuration {
+    allow_headers = ["content-type"]
+    allow_methods = ["GET", "POST", "OPTIONS"]
+    allow_origins = var.cors_allowed_origins
+    max_age       = 600
   }
+}
+
+resource "aws_apigatewayv2_integration" "lambda" {
+  api_id                 = aws_apigatewayv2_api.http.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = aws_lambda_function.app.invoke_arn
+  payload_format_version = "2.0"
+  timeout_milliseconds   = var.timeout * 1000
+}
+
+# Catch-all route: FastAPI does the real method/path dispatch and validation.
+resource "aws_apigatewayv2_route" "default" {
+  api_id    = aws_apigatewayv2_api.http.id
+  route_key = "$default"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+}
+
+resource "aws_apigatewayv2_stage" "default" {
+  api_id      = aws_apigatewayv2_api.http.id
+  name        = "$default"
+  auto_deploy = true
+
+  default_route_settings {
+    throttling_rate_limit  = var.throttle_rate_per_second
+    throttling_burst_limit = var.throttle_burst
+  }
+}
+
+resource "aws_lambda_permission" "api" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.app.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.http.execution_arn}/*/*"
 }
