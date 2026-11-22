@@ -1,0 +1,42 @@
+name: Deploy (dev)
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write # required for OIDC
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: aws-actions/amazon-ecr-login@v2
+        id: ecr
+
+      - name: Build & push Lambda image
+        run: |
+          IMAGE="${{ steps.ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ github.sha }}"
+          docker build -f Dockerfile.lambda -t "$IMAGE" .
+          docker push "$IMAGE"
+
+      - name: Update Lambda function
+        run: |
+          aws lambda update-function-code \
+            --function-name "${{ vars.LAMBDA_FUNCTION_NAME }}" \
+            --image-uri "${{ steps.ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ github.sha }}"
+
+# Requires repo variables (Settings -> Secrets and variables -> Actions -> Variables),
+# sourced from `terraform output` after the first `terraform apply` in infra/:
+#   AWS_DEPLOY_ROLE_ARN, ECR_REPOSITORY, LAMBDA_FUNCTION_NAME
