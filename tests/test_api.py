@@ -23,8 +23,10 @@ def test_samples_cover_both_outcomes(client):
 def test_explore_has_chart_data(client):
     body = client.get("/api/v1/explore").json()
 
-    assert body["pruning_curve"] and body["threshold_sweep"] and body["feature_importance"]
-    assert body["metrics"]["final_model"]
+    kinds = {chart["kind"] for chart in body["charts"]}
+    assert kinds == {"line", "threshold", "bar", "table"}
+    assert all(chart["title"] and chart["caption"] for chart in body["charts"])
+    assert len(body["headline"]) == 4
 
 
 def test_predict_returns_score_and_decision_path(client, sample_inputs):

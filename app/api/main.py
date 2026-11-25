@@ -5,6 +5,7 @@ from typing import Any
 
 from fastapi import APIRouter
 
+from app.api.explore import build_explore
 from app.features import FIELDS
 from app.model import get_model, get_samples
 from app.schemas import PredictionInput, PredictionOutput, Sample, SchemaResponse
@@ -58,8 +59,8 @@ def samples() -> list[dict[str, Any]]:
 
 @api_router.get("/explore", tags=["demo"])
 def explore() -> dict[str, Any]:
-    """Precomputed data for the interactive charts (pruning curve, threshold sweep, …)."""
-    return {**_explore(), "metrics": _metrics()}
+    """Precomputed chart specs for the interactive Explore panel (ml-demo-kit/v1)."""
+    return build_explore(_explore(), _metrics())
 
 
 @api_router.post("/predict", response_model=PredictionOutput, tags=["demo"])
