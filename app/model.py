@@ -105,11 +105,20 @@ class PurchaseModel:
         frame = records_to_frame([record])
         probability = float(self.pipeline.predict_proba(frame)[0, self._positive])
         encoded = self.pipeline.named_steps["prep"].transform(frame)
+        positive = probability >= self.threshold
         return {
-            "probability": round(probability, 4),
-            "will_purchase": probability >= self.threshold,
+            "task": "classification",
+            "score": round(probability, 4),
+            "score_label": "Purchase probability",
             "threshold": self.threshold,
-            "decision_path": self._decision_path(np.asarray(encoded)[0]),
+            "positive": positive,
+            "outcome": "Likely to buy" if positive else "Unlikely to buy",
+            "explanation": {
+                "kind": "path",
+                "title": "How the tree decided",
+                "value_label": "Purchase rate of training customers at this step",
+                "steps": self._decision_path(np.asarray(encoded)[0]),
+            },
             "model_version": self.version,
         }
 
@@ -126,10 +135,10 @@ class PurchaseModel:
             # tree's own `value` is distorted by class_weight="balanced", so train.py records it.
             steps.append(
                 {
-                    "rule": _rule_text(feature, threshold, went_left),
+                    "label": _rule_text(feature, threshold, went_left),
                     "field": feature.field,
-                    "purchase_rate": self._node_rates[node],
-                    "customers": int(tree.n_node_samples[node]),
+                    "value": self._node_rates[node],
+                    "count": int(tree.n_node_samples[node]),
                 }
             )
         return steps

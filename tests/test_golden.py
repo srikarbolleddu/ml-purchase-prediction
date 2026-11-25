@@ -12,7 +12,7 @@ GOLDEN = json.loads((Path(__file__).resolve().parents[1] / "reports" / "golden.j
 
 @pytest.mark.parametrize("case", GOLDEN, ids=lambda c: str(c["probability"]))
 def test_golden_prediction(case):
-    assert get_model().predict(case["inputs"])["probability"] == pytest.approx(
+    assert get_model().predict(case["inputs"])["score"] == pytest.approx(
         case["probability"], abs=1e-4
     )
 

@@ -5,6 +5,7 @@ from typing import Any
 
 from fastapi import APIRouter
 
+from app.api.explore import build_explore
 from app.features import FIELDS
 from app.model import get_model, get_samples
 from app.schemas import PredictionInput, PredictionOutput, Sample, SchemaResponse
@@ -35,7 +36,13 @@ def schema() -> dict[str, Any]:
     """Input fields for the demo form (types, ranges, options, help text)."""
     model = get_model()
     return {
+        "contract": "ml-demo-kit/v1",
         "title": "Will this customer buy a term deposit?",
+        "description": (
+            "Change the customer's profile, the call, or the economy at the time, and see how a "
+            "pruned decision tree's prediction and reasoning change."
+        ),
+        "task": "classification",
         "target": "purchased",
         "groups": GROUPS,
         "fields": [f.to_schema() for f in FIELDS],
@@ -52,8 +59,8 @@ def samples() -> list[dict[str, Any]]:
 
 @api_router.get("/explore", tags=["demo"])
 def explore() -> dict[str, Any]:
-    """Precomputed data for the interactive charts (pruning curve, threshold sweep, …)."""
-    return {**_explore(), "metrics": _metrics()}
+    """Precomputed chart specs for the interactive Explore panel (ml-demo-kit/v1)."""
+    return build_explore(_explore(), _metrics())
 
 
 @api_router.post("/predict", response_model=PredictionOutput, tags=["demo"])

@@ -18,7 +18,7 @@ _hits: dict[str, deque[float]] = defaultdict(deque)
 
 
 def _client_ip(request: Request) -> str:
-    # Lambda Function URLs put the caller's address first in X-Forwarded-For.
+    # API Gateway puts the caller's address first in X-Forwarded-For.
     forwarded = request.headers.get("x-forwarded-for", "")
     return forwarded.split(",")[0].strip() or (request.client.host if request.client else "?")
 

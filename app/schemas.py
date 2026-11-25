@@ -26,18 +26,32 @@ PredictionInput = create_model(  # ty: ignore[no-matching-overload]
 )
 
 
-class DecisionStep(BaseModel):
-    rule: str
+# The response shape below is the shared ml-demo-kit contract (v1), so one UI renders every
+# project's demo. See https://github.com/srikarbolleddu/ml-demo-kit#api-contract.
+
+
+class ExplanationStep(BaseModel):
+    label: str = Field(description="Human-readable rule, e.g. 'Age > 60'.")
     field: str
-    purchase_rate: float = Field(description="Training purchase rate of customers at this step.")
-    customers: int = Field(description="Training customers that reached this step.")
+    value: float = Field(description="Training purchase rate of customers at this step.")
+    count: int = Field(description="Training customers that reached this step.")
+
+
+class Explanation(BaseModel):
+    kind: Literal["path", "contributions"]
+    title: str
+    value_label: str
+    steps: list[ExplanationStep]
 
 
 class PredictionOutput(BaseModel):
-    probability: float
-    will_purchase: bool
+    task: Literal["classification", "regression"]
+    score: float = Field(description="Purchase probability, 0-1.")
+    score_label: str
     threshold: float
-    decision_path: list[DecisionStep]
+    positive: bool
+    outcome: str
+    explanation: Explanation
     model_version: str
 
 
@@ -48,7 +62,10 @@ class Sample(BaseModel):
 
 
 class SchemaResponse(BaseModel):
+    contract: str
     title: str
+    description: str
+    task: Literal["classification", "regression"]
     target: str
     groups: list[dict[str, str]]
     fields: list[dict[str, Any]]

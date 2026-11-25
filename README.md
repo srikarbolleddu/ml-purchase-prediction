@@ -51,8 +51,10 @@ matters more than who is called. The demo lets you change both to see this for y
 | `GET /api/v1/schema` | Input fields with types, ranges, options and help text. The demo form is generated from this. |
 | `GET /api/v1/samples` | Six real held-out customers (3 buyers, 3 non-buyers, including one mistake each way) |
 | `GET /api/v1/explore` | Precomputed chart data: pruning curve, threshold sweep, feature importance, metrics |
-| `POST /api/v1/predict` | Probability, yes/no at the tuned threshold, and the decision path |
+| `POST /api/v1/predict` | Probability (`score`), yes/no at the tuned threshold, and the decision path (`explanation`) |
 | `GET /api/v1/docs` | Interactive OpenAPI docs |
+
+The response shapes follow the shared [ml-demo-kit](https://github.com/srikarbolleddu/ml-demo-kit) contract (`ml-demo-kit/v1`), so the same UI components render every project's demo.
 
 ## Run locally
 
