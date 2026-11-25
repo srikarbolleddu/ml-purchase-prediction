@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     # Largest accepted request body; a full prediction request is well under 1KB.
     MAX_BODY_BYTES: int = 4096
     # Best-effort per-client limit within one warm Lambda instance. The hard ceiling is the
-    # function's reserved concurrency (infra/variables.tf).
+    # API Gateway stage throttle (infra/main.tf).
     RATE_LIMIT_PER_MINUTE: int = 60
 
 

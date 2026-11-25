@@ -35,7 +35,13 @@ def schema() -> dict[str, Any]:
     """Input fields for the demo form (types, ranges, options, help text)."""
     model = get_model()
     return {
+        "contract": "ml-demo-kit/v1",
         "title": "Will this customer buy a term deposit?",
+        "description": (
+            "Change the customer's profile, the call, or the economy at the time, and see how a "
+            "pruned decision tree's prediction and reasoning change."
+        ),
+        "task": "classification",
         "target": "purchased",
         "groups": GROUPS,
         "fields": [f.to_schema() for f in FIELDS],

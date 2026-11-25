@@ -8,6 +8,7 @@ def test_health(client):
 def test_schema_lists_every_field_with_groups(client):
     body = client.get("/api/v1/schema").json()
 
+    assert body["contract"] == "ml-demo-kit/v1"
     assert {g["id"] for g in body["groups"]} == {"customer", "campaign", "economy"}
     assert len(body["fields"]) == 19
     assert 0 < body["threshold"] < 1
@@ -26,12 +27,14 @@ def test_explore_has_chart_data(client):
     assert body["metrics"]["final_model"]
 
 
-def test_predict_returns_probability_and_decision_path(client, sample_inputs):
+def test_predict_returns_score_and_decision_path(client, sample_inputs):
     body = client.post("/api/v1/predict", json=sample_inputs).json()
 
-    assert 0 <= body["probability"] <= 1
-    assert body["will_purchase"] == (body["probability"] >= body["threshold"])
-    assert body["decision_path"] and all(step["rule"] for step in body["decision_path"])
+    assert 0 <= body["score"] <= 1
+    assert body["positive"] == (body["score"] >= body["threshold"])
+    steps = body["explanation"]["steps"]
+    assert body["explanation"]["kind"] == "path"
+    assert steps and all(step["label"] and 0 <= step["value"] <= 1 for step in steps)
 
 
 def test_predict_accepts_never_contacted(client, sample_inputs):

@@ -29,7 +29,7 @@ def main() -> None:
     checks.append(("samples", status == 200 and isinstance(samples, list) and len(samples) > 0))
     inputs = samples[0]["inputs"] if isinstance(samples, list) else {}
     status, prediction = call("/predict", inputs)
-    checks.append(("predict", status == 200 and "probability" in prediction))
+    checks.append(("predict", status == 200 and "score" in prediction))
     checks.append(("predict rejects bad input", call("/predict", {**inputs, "age": 500})[0] == 422))
     for name, ok in checks:
         print(f"{'PASS' if ok else 'FAIL'}  {name}")
