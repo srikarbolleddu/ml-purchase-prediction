@@ -19,11 +19,11 @@ resource "aws_ecr_lifecycle_policy" "app" {
   policy = jsonencode({
     rules = [{
       rulePriority = 1
-      description  = "Keep last 10 images"
+      description  = "Keep the live image plus two rollbacks (storage is the demo's main cost)"
       selection = {
         tagStatus   = "any"
         countType   = "imageCountMoreThan"
-        countNumber = 10
+        countNumber = 3
       }
       action = { type = "expire" }
     }]
@@ -34,7 +34,7 @@ resource "aws_ecr_lifecycle_policy" "app" {
 
 resource "aws_cloudwatch_log_group" "app" {
   name              = "/aws/lambda/${local.name}"
-  retention_in_days = var.environment == "prod" ? 90 : 14
+  retention_in_days = 14 # a public demo: short retention keeps log storage near zero
 }
 
 # --- Lambda execution role ---
@@ -85,6 +85,12 @@ resource "aws_lambda_function" "app" {
   }
 
   depends_on = [aws_cloudwatch_log_group.app]
+
+  # After the first apply, the Deploy workflow owns the image (it pushes git-SHA tags and calls
+  # update-function-code). Without this, a later `terraform apply` would roll the code back.
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
 }
 
 # --- Public HTTPS endpoint: API Gateway HTTP API (not a raw Function URL) ---

@@ -36,8 +36,10 @@ Skip this section entirely if you already did it for another app built from thes
    terraform apply -target=aws_ecr_repository.app -var-file=environments/prod.tfvars
    cd ..
    aws ecr get-login-password | docker login --username AWS --password-stdin <account-id>.dkr.ecr.us-east-2.amazonaws.com
-   docker build -f Dockerfile.lambda -t <ecr-repo-url>:latest .
-   docker push <ecr-repo-url>:latest
+   # Tag must equal image_tag in prod.tfvars ("bootstrap"); tags are immutable.
+   # --provenance=false: Lambda rejects the OCI image index a provenance attestation creates.
+   docker build --provenance=false --platform linux/amd64 -f Dockerfile.lambda -t <ecr-repo-url>:bootstrap .
+   docker push <ecr-repo-url>:bootstrap
    ```
 4. Then the full apply: `terraform apply -var-file=environments/prod.tfvars`.
 5. Put the `deploy_role_arn` output into the repo's GitHub Actions repo variables (e.g. `AWS_DEPLOY_ROLE_ARN`) so CI can assume it — see `.github/workflows/deploy.yml`.
