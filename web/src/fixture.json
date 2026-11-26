@@ -1,0 +1,1647 @@
+{
+  "schema": {
+    "contract": "ml-demo-kit/v1",
+    "title": "Will this customer buy a term deposit?",
+    "description": "Change the customer's profile, the call, or the economy at the time, and see how a pruned decision tree's prediction and reasoning change.",
+    "task": "classification",
+    "target": "purchased",
+    "groups": [
+      {
+        "id": "customer",
+        "label": "Customer"
+      },
+      {
+        "id": "campaign",
+        "label": "Campaign contact"
+      },
+      {
+        "id": "economy",
+        "label": "Economic context"
+      }
+    ],
+    "fields": [
+      {
+        "name": "age",
+        "label": "Age",
+        "kind": "number",
+        "group": "customer",
+        "help": "Customer's age in years.",
+        "optional": false,
+        "min": 17,
+        "max": 98,
+        "step": 1,
+        "unit": "years"
+      },
+      {
+        "name": "job",
+        "label": "Job",
+        "kind": "category",
+        "group": "customer",
+        "help": "Type of job.",
+        "optional": false,
+        "options": [
+          {
+            "value": "admin.",
+            "label": "Admin"
+          },
+          {
+            "value": "blue-collar",
+            "label": "Blue collar"
+          },
+          {
+            "value": "entrepreneur",
+            "label": "Entrepreneur"
+          },
+          {
+            "value": "housemaid",
+            "label": "Housemaid"
+          },
+          {
+            "value": "management",
+            "label": "Management"
+          },
+          {
+            "value": "retired",
+            "label": "Retired"
+          },
+          {
+            "value": "self-employed",
+            "label": "Self employed"
+          },
+          {
+            "value": "services",
+            "label": "Services"
+          },
+          {
+            "value": "student",
+            "label": "Student"
+          },
+          {
+            "value": "technician",
+            "label": "Technician"
+          },
+          {
+            "value": "unemployed",
+            "label": "Unemployed"
+          },
+          {
+            "value": "unknown",
+            "label": "Unknown"
+          }
+        ]
+      },
+      {
+        "name": "marital",
+        "label": "Marital status",
+        "kind": "category",
+        "group": "customer",
+        "help": "Marital status.",
+        "optional": false,
+        "options": [
+          {
+            "value": "married",
+            "label": "Married"
+          },
+          {
+            "value": "single",
+            "label": "Single"
+          },
+          {
+            "value": "divorced",
+            "label": "Divorced"
+          },
+          {
+            "value": "unknown",
+            "label": "Unknown"
+          }
+        ]
+      },
+      {
+        "name": "education",
+        "label": "Education",
+        "kind": "category",
+        "group": "customer",
+        "help": "Highest education level.",
+        "optional": false,
+        "options": [
+          {
+            "value": "basic.4y",
+            "label": "Basic (4 years)"
+          },
+          {
+            "value": "basic.6y",
+            "label": "Basic (6 years)"
+          },
+          {
+            "value": "basic.9y",
+            "label": "Basic (9 years)"
+          },
+          {
+            "value": "high.school",
+            "label": "High school"
+          },
+          {
+            "value": "professional.course",
+            "label": "Professional course"
+          },
+          {
+            "value": "university.degree",
+            "label": "University degree"
+          },
+          {
+            "value": "illiterate",
+            "label": "Illiterate"
+          },
+          {
+            "value": "unknown",
+            "label": "Unknown"
+          }
+        ]
+      },
+      {
+        "name": "default",
+        "label": "Credit in default?",
+        "kind": "category",
+        "group": "customer",
+        "help": "Whether the customer has credit in default.",
+        "optional": false,
+        "options": [
+          {
+            "value": "no",
+            "label": "No"
+          },
+          {
+            "value": "yes",
+            "label": "Yes"
+          },
+          {
+            "value": "unknown",
+            "label": "Unknown"
+          }
+        ]
+      },
+      {
+        "name": "housing",
+        "label": "Housing loan?",
+        "kind": "category",
+        "group": "customer",
+        "help": "Whether the customer has a housing loan.",
+        "optional": false,
+        "options": [
+          {
+            "value": "no",
+            "label": "No"
+          },
+          {
+            "value": "yes",
+            "label": "Yes"
+          },
+          {
+            "value": "unknown",
+            "label": "Unknown"
+          }
+        ]
+      },
+      {
+        "name": "loan",
+        "label": "Personal loan?",
+        "kind": "category",
+        "group": "customer",
+        "help": "Whether the customer has a personal loan.",
+        "optional": false,
+        "options": [
+          {
+            "value": "no",
+            "label": "No"
+          },
+          {
+            "value": "yes",
+            "label": "Yes"
+          },
+          {
+            "value": "unknown",
+            "label": "Unknown"
+          }
+        ]
+      },
+      {
+        "name": "contact",
+        "label": "Contact channel",
+        "kind": "category",
+        "group": "campaign",
+        "help": "How the customer is contacted.",
+        "optional": false,
+        "options": [
+          {
+            "value": "cellular",
+            "label": "Cellular"
+          },
+          {
+            "value": "telephone",
+            "label": "Telephone"
+          }
+        ]
+      },
+      {
+        "name": "month",
+        "label": "Contact month",
+        "kind": "category",
+        "group": "campaign",
+        "help": "Month of the last contact.",
+        "optional": false,
+        "options": [
+          {
+            "value": "mar",
+            "label": "Mar"
+          },
+          {
+            "value": "apr",
+            "label": "Apr"
+          },
+          {
+            "value": "may",
+            "label": "May"
+          },
+          {
+            "value": "jun",
+            "label": "Jun"
+          },
+          {
+            "value": "jul",
+            "label": "Jul"
+          },
+          {
+            "value": "aug",
+            "label": "Aug"
+          },
+          {
+            "value": "sep",
+            "label": "Sep"
+          },
+          {
+            "value": "oct",
+            "label": "Oct"
+          },
+          {
+            "value": "nov",
+            "label": "Nov"
+          },
+          {
+            "value": "dec",
+            "label": "Dec"
+          }
+        ]
+      },
+      {
+        "name": "day_of_week",
+        "label": "Contact weekday",
+        "kind": "category",
+        "group": "campaign",
+        "help": "Weekday of the last contact.",
+        "optional": false,
+        "options": [
+          {
+            "value": "mon",
+            "label": "Mon"
+          },
+          {
+            "value": "tue",
+            "label": "Tue"
+          },
+          {
+            "value": "wed",
+            "label": "Wed"
+          },
+          {
+            "value": "thu",
+            "label": "Thu"
+          },
+          {
+            "value": "fri",
+            "label": "Fri"
+          }
+        ]
+      },
+      {
+        "name": "campaign",
+        "label": "Contacts this campaign",
+        "kind": "number",
+        "group": "campaign",
+        "help": "Number of contacts made during this campaign, including the last one.",
+        "optional": false,
+        "min": 1,
+        "max": 56,
+        "step": 1,
+        "unit": null
+      },
+      {
+        "name": "days_since_last_contact",
+        "label": "Days since previous-campaign contact",
+        "kind": "number",
+        "group": "campaign",
+        "help": "Days since the customer was last contacted in a previous campaign. Leave empty if never contacted.",
+        "optional": true,
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "unit": "days"
+      },
+      {
+        "name": "previous",
+        "label": "Contacts before this campaign",
+        "kind": "number",
+        "group": "campaign",
+        "help": "Number of contacts before this campaign.",
+        "optional": false,
+        "min": 0,
+        "max": 7,
+        "step": 1,
+        "unit": null
+      },
+      {
+        "name": "poutcome",
+        "label": "Previous campaign outcome",
+        "kind": "category",
+        "group": "campaign",
+        "help": "Outcome of the previous marketing campaign.",
+        "optional": false,
+        "options": [
+          {
+            "value": "nonexistent",
+            "label": "No previous campaign"
+          },
+          {
+            "value": "failure",
+            "label": "Failure"
+          },
+          {
+            "value": "success",
+            "label": "Success"
+          }
+        ]
+      },
+      {
+        "name": "emp_var_rate",
+        "label": "Employment variation rate",
+        "kind": "number",
+        "group": "economy",
+        "help": "Quarterly employment variation rate (macro indicator).",
+        "optional": false,
+        "min": -3.4,
+        "max": 1.4,
+        "step": 0.1,
+        "unit": null
+      },
+      {
+        "name": "cons_price_idx",
+        "label": "Consumer price index",
+        "kind": "number",
+        "group": "economy",
+        "help": "Monthly consumer price index.",
+        "optional": false,
+        "min": 92.2,
+        "max": 94.8,
+        "step": 0.001,
+        "unit": null
+      },
+      {
+        "name": "cons_conf_idx",
+        "label": "Consumer confidence index",
+        "kind": "number",
+        "group": "economy",
+        "help": "Monthly consumer confidence index.",
+        "optional": false,
+        "min": -50.8,
+        "max": -26.9,
+        "step": 0.1,
+        "unit": null
+      },
+      {
+        "name": "euribor3m",
+        "label": "Euribor 3-month rate",
+        "kind": "number",
+        "group": "economy",
+        "help": "Daily Euribor 3-month interest rate.",
+        "optional": false,
+        "min": 0.6,
+        "max": 5.1,
+        "step": 0.001,
+        "unit": "%"
+      },
+      {
+        "name": "nr_employed",
+        "label": "Number employed",
+        "kind": "number",
+        "group": "economy",
+        "help": "Quarterly number of employees (thousands).",
+        "optional": false,
+        "min": 4963,
+        "max": 5229,
+        "step": 0.1,
+        "unit": "thousand"
+      }
+    ],
+    "model_version": "pre-pruned-tree-26aa6180",
+    "threshold": 0.65
+  },
+  "samples": [
+    {
+      "title": "Buyer: previous campaign was a success",
+      "inputs": {
+        "age": 30,
+        "job": "technician",
+        "marital": "married",
+        "education": "professional.course",
+        "default": "no",
+        "housing": "yes",
+        "loan": "no",
+        "contact": "cellular",
+        "month": "mar",
+        "day_of_week": "tue",
+        "campaign": 2,
+        "days_since_last_contact": 6,
+        "previous": 2,
+        "poutcome": "success",
+        "emp_var_rate": -1.8,
+        "cons_price_idx": 93.369,
+        "cons_conf_idx": -34.8,
+        "euribor3m": 0.655,
+        "nr_employed": 5008.7
+      },
+      "actual": "purchased"
+    },
+    {
+      "title": "Buyer: first-time contact on a mobile",
+      "inputs": {
+        "age": 33,
+        "job": "technician",
+        "marital": "single",
+        "education": "professional.course",
+        "default": "no",
+        "housing": "yes",
+        "loan": "no",
+        "contact": "cellular",
+        "month": "sep",
+        "day_of_week": "fri",
+        "campaign": 1,
+        "days_since_last_contact": null,
+        "previous": 0,
+        "poutcome": "nonexistent",
+        "emp_var_rate": -1.1,
+        "cons_price_idx": 94.199,
+        "cons_conf_idx": -37.5,
+        "euribor3m": 0.879,
+        "nr_employed": 4963.6
+      },
+      "actual": "purchased"
+    },
+    {
+      "title": "Buyer the model misses",
+      "inputs": {
+        "age": 32,
+        "job": "services",
+        "marital": "married",
+        "education": "high.school",
+        "default": "no",
+        "housing": "yes",
+        "loan": "no",
+        "contact": "telephone",
+        "month": "may",
+        "day_of_week": "wed",
+        "campaign": 2,
+        "days_since_last_contact": null,
+        "previous": 0,
+        "poutcome": "nonexistent",
+        "emp_var_rate": -1.8,
+        "cons_price_idx": 92.893,
+        "cons_conf_idx": -46.2,
+        "euribor3m": 1.27,
+        "nr_employed": 5099.1
+      },
+      "actual": "purchased"
+    },
+    {
+      "title": "Non-buyer: May telephone campaign",
+      "inputs": {
+        "age": 43,
+        "job": "blue-collar",
+        "marital": "married",
+        "education": "basic.4y",
+        "default": "no",
+        "housing": "no",
+        "loan": "no",
+        "contact": "telephone",
+        "month": "may",
+        "day_of_week": "thu",
+        "campaign": 1,
+        "days_since_last_contact": null,
+        "previous": 0,
+        "poutcome": "nonexistent",
+        "emp_var_rate": 1.1,
+        "cons_price_idx": 93.994,
+        "cons_conf_idx": -36.4,
+        "euribor3m": 4.855,
+        "nr_employed": 5191
+      },
+      "actual": "did not purchase"
+    },
+    {
+      "title": "Non-buyer: already has a housing loan",
+      "inputs": {
+        "age": 35,
+        "job": "blue-collar",
+        "marital": "married",
+        "education": "basic.9y",
+        "default": "no",
+        "housing": "yes",
+        "loan": "no",
+        "contact": "cellular",
+        "month": "apr",
+        "day_of_week": "tue",
+        "campaign": 1,
+        "days_since_last_contact": null,
+        "previous": 0,
+        "poutcome": "nonexistent",
+        "emp_var_rate": -1.8,
+        "cons_price_idx": 93.075,
+        "cons_conf_idx": -47.1,
+        "euribor3m": 1.423,
+        "nr_employed": 5099.1
+      },
+      "actual": "did not purchase"
+    },
+    {
+      "title": "Non-buyer the model flags as a buyer",
+      "inputs": {
+        "age": 23,
+        "job": "technician",
+        "marital": "single",
+        "education": "professional.course",
+        "default": "unknown",
+        "housing": "yes",
+        "loan": "yes",
+        "contact": "cellular",
+        "month": "jun",
+        "day_of_week": "tue",
+        "campaign": 1,
+        "days_since_last_contact": 4,
+        "previous": 3,
+        "poutcome": "success",
+        "emp_var_rate": -1.7,
+        "cons_price_idx": 94.055,
+        "cons_conf_idx": -39.8,
+        "euribor3m": 0.702,
+        "nr_employed": 4991.6
+      },
+      "actual": "did not purchase"
+    }
+  ],
+  "explore": {
+    "contract": "ml-demo-kit/v1",
+    "headline": [
+      {
+        "label": "Precision",
+        "value": 0.4364,
+        "format": "percent",
+        "hint": "3.9x the 11% base rate"
+      },
+      {
+        "label": "Recall",
+        "value": 0.5808,
+        "format": "percent",
+        "hint": "Share of all buyers reached"
+      },
+      {
+        "label": "PR-AUC",
+        "value": 0.4519,
+        "format": "number",
+        "hint": "Held-out test set"
+      },
+      {
+        "label": "Tree size",
+        "value": 95,
+        "format": "integer",
+        "hint": "Pre-pruned tree, depth 10"
+      }
+    ],
+    "charts": [
+      {
+        "id": "pruning",
+        "kind": "line",
+        "title": "Pruning: bigger trees memorize, smaller trees generalize",
+        "caption": "Each point is a cost-complexity pruned tree. Drag the slider: the training score keeps rising as the tree grows, but the validation score peaks early and then falls. That gap is overfitting.",
+        "x": {
+          "key": "leaves",
+          "label": "Leaves in the tree",
+          "scale": "log"
+        },
+        "y": {
+          "label": "PR-AUC",
+          "format": "number"
+        },
+        "series": [
+          {
+            "key": "train_pr_auc",
+            "label": "Training"
+          },
+          {
+            "key": "val_pr_auc",
+            "label": "Validation"
+          }
+        ],
+        "points": [
+          {
+            "leaves": 2,
+            "train_pr_auc": 0.2653,
+            "val_pr_auc": 0.2915
+          },
+          {
+            "leaves": 75,
+            "train_pr_auc": 0.4377,
+            "val_pr_auc": 0.4424
+          },
+          {
+            "leaves": 216,
+            "train_pr_auc": 0.4735,
+            "val_pr_auc": 0.436
+          },
+          {
+            "leaves": 337,
+            "train_pr_auc": 0.5015,
+            "val_pr_auc": 0.4297
+          },
+          {
+            "leaves": 421,
+            "train_pr_auc": 0.5142,
+            "val_pr_auc": 0.4258
+          },
+          {
+            "leaves": 498,
+            "train_pr_auc": 0.5262,
+            "val_pr_auc": 0.4227
+          },
+          {
+            "leaves": 589,
+            "train_pr_auc": 0.5425,
+            "val_pr_auc": 0.4074
+          },
+          {
+            "leaves": 657,
+            "train_pr_auc": 0.5526,
+            "val_pr_auc": 0.3965
+          },
+          {
+            "leaves": 757,
+            "train_pr_auc": 0.565,
+            "val_pr_auc": 0.3853
+          },
+          {
+            "leaves": 884,
+            "train_pr_auc": 0.5902,
+            "val_pr_auc": 0.3654
+          },
+          {
+            "leaves": 978,
+            "train_pr_auc": 0.6,
+            "val_pr_auc": 0.3601
+          },
+          {
+            "leaves": 1070,
+            "train_pr_auc": 0.6175,
+            "val_pr_auc": 0.3507
+          },
+          {
+            "leaves": 1152,
+            "train_pr_auc": 0.6369,
+            "val_pr_auc": 0.343
+          },
+          {
+            "leaves": 1241,
+            "train_pr_auc": 0.6562,
+            "val_pr_auc": 0.3332
+          },
+          {
+            "leaves": 1317,
+            "train_pr_auc": 0.6677,
+            "val_pr_auc": 0.3192
+          },
+          {
+            "leaves": 1379,
+            "train_pr_auc": 0.6806,
+            "val_pr_auc": 0.3107
+          },
+          {
+            "leaves": 1462,
+            "train_pr_auc": 0.6961,
+            "val_pr_auc": 0.3085
+          },
+          {
+            "leaves": 1574,
+            "train_pr_auc": 0.713,
+            "val_pr_auc": 0.2999
+          },
+          {
+            "leaves": 1663,
+            "train_pr_auc": 0.7391,
+            "val_pr_auc": 0.2794
+          },
+          {
+            "leaves": 1759,
+            "train_pr_auc": 0.7598,
+            "val_pr_auc": 0.2707
+          },
+          {
+            "leaves": 1860,
+            "train_pr_auc": 0.7795,
+            "val_pr_auc": 0.2571
+          },
+          {
+            "leaves": 1905,
+            "train_pr_auc": 0.7903,
+            "val_pr_auc": 0.2497
+          },
+          {
+            "leaves": 1968,
+            "train_pr_auc": 0.7988,
+            "val_pr_auc": 0.2465
+          },
+          {
+            "leaves": 2087,
+            "train_pr_auc": 0.8217,
+            "val_pr_auc": 0.2446
+          },
+          {
+            "leaves": 2205,
+            "train_pr_auc": 0.8434,
+            "val_pr_auc": 0.233
+          },
+          {
+            "leaves": 2348,
+            "train_pr_auc": 0.8649,
+            "val_pr_auc": 0.2306
+          },
+          {
+            "leaves": 2476,
+            "train_pr_auc": 0.8924,
+            "val_pr_auc": 0.2207
+          },
+          {
+            "leaves": 2549,
+            "train_pr_auc": 0.9075,
+            "val_pr_auc": 0.2144
+          },
+          {
+            "leaves": 2591,
+            "train_pr_auc": 0.9166,
+            "val_pr_auc": 0.2078
+          },
+          {
+            "leaves": 2685,
+            "train_pr_auc": 0.9327,
+            "val_pr_auc": 0.2023
+          },
+          {
+            "leaves": 2771,
+            "train_pr_auc": 0.9423,
+            "val_pr_auc": 0.1981
+          },
+          {
+            "leaves": 2827,
+            "train_pr_auc": 0.9483,
+            "val_pr_auc": 0.1948
+          },
+          {
+            "leaves": 2920,
+            "train_pr_auc": 0.9575,
+            "val_pr_auc": 0.1903
+          },
+          {
+            "leaves": 2999,
+            "train_pr_auc": 0.9631,
+            "val_pr_auc": 0.1863
+          },
+          {
+            "leaves": 3100,
+            "train_pr_auc": 0.9672,
+            "val_pr_auc": 0.1825
+          },
+          {
+            "leaves": 3216,
+            "train_pr_auc": 0.9731,
+            "val_pr_auc": 0.178
+          },
+          {
+            "leaves": 3359,
+            "train_pr_auc": 0.9798,
+            "val_pr_auc": 0.1783
+          },
+          {
+            "leaves": 3476,
+            "train_pr_auc": 0.9875,
+            "val_pr_auc": 0.1852
+          },
+          {
+            "leaves": 3578,
+            "train_pr_auc": 0.9932,
+            "val_pr_auc": 0.1856
+          },
+          {
+            "leaves": 3651,
+            "train_pr_auc": 0.9955,
+            "val_pr_auc": 0.1848
+          },
+          {
+            "leaves": 3743,
+            "train_pr_auc": 0.9976,
+            "val_pr_auc": 0.1819
+          },
+          {
+            "leaves": 3868,
+            "train_pr_auc": 0.9992,
+            "val_pr_auc": 0.1868
+          },
+          {
+            "leaves": 3917,
+            "train_pr_auc": 0.9991,
+            "val_pr_auc": 0.1866
+          },
+          {
+            "leaves": 3958,
+            "train_pr_auc": 0.9991,
+            "val_pr_auc": 0.1866
+          },
+          {
+            "leaves": 4000,
+            "train_pr_auc": 0.9991,
+            "val_pr_auc": 0.1866
+          },
+          {
+            "leaves": 4039,
+            "train_pr_auc": 0.9991,
+            "val_pr_auc": 0.1866
+          },
+          {
+            "leaves": 4083,
+            "train_pr_auc": 0.9991,
+            "val_pr_auc": 0.1866
+          },
+          {
+            "leaves": 4124,
+            "train_pr_auc": 0.9991,
+            "val_pr_auc": 0.1866
+          },
+          {
+            "leaves": 4153,
+            "train_pr_auc": 0.9991,
+            "val_pr_auc": 0.1866
+          },
+          {
+            "leaves": 4203,
+            "train_pr_auc": 0.9991,
+            "val_pr_auc": 0.1866
+          },
+          {
+            "leaves": 4289,
+            "train_pr_auc": 0.9991,
+            "val_pr_auc": 0.1866
+          },
+          {
+            "leaves": 4310,
+            "train_pr_auc": 0.9991,
+            "val_pr_auc": 0.1866
+          },
+          {
+            "leaves": 4370,
+            "train_pr_auc": 0.9991,
+            "val_pr_auc": 0.1866
+          },
+          {
+            "leaves": 4399,
+            "train_pr_auc": 0.9991,
+            "val_pr_auc": 0.1866
+          },
+          {
+            "leaves": 4469,
+            "train_pr_auc": 0.9991,
+            "val_pr_auc": 0.1866
+          },
+          {
+            "leaves": 4581,
+            "train_pr_auc": 0.9991,
+            "val_pr_auc": 0.1866
+          }
+        ]
+      },
+      {
+        "id": "threshold",
+        "kind": "threshold",
+        "title": "Choose the call list: the decision threshold",
+        "caption": "Customers scoring above the threshold get a call. Lower it to reach more buyers (recall) at the cost of more wasted calls (precision).",
+        "positive_label": "Buys",
+        "negative_label": "Doesn't buy",
+        "selected": 0.65,
+        "sweep": [
+          {
+            "threshold": 0.05,
+            "tn": 482,
+            "fp": 6828,
+            "fn": 10,
+            "tp": 918
+          },
+          {
+            "threshold": 0.1,
+            "tn": 758,
+            "fp": 6552,
+            "fn": 19,
+            "tp": 909
+          },
+          {
+            "threshold": 0.15,
+            "tn": 921,
+            "fp": 6389,
+            "fn": 26,
+            "tp": 902
+          },
+          {
+            "threshold": 0.2,
+            "tn": 1152,
+            "fp": 6158,
+            "fn": 40,
+            "tp": 888
+          },
+          {
+            "threshold": 0.25,
+            "tn": 1938,
+            "fp": 5372,
+            "fn": 68,
+            "tp": 860
+          },
+          {
+            "threshold": 0.3,
+            "tn": 3015,
+            "fp": 4295,
+            "fn": 124,
+            "tp": 804
+          },
+          {
+            "threshold": 0.35,
+            "tn": 3802,
+            "fp": 3508,
+            "fn": 168,
+            "tp": 760
+          },
+          {
+            "threshold": 0.4,
+            "tn": 5840,
+            "fp": 1470,
+            "fn": 311,
+            "tp": 617
+          },
+          {
+            "threshold": 0.45,
+            "tn": 6085,
+            "fp": 1225,
+            "fn": 336,
+            "tp": 592
+          },
+          {
+            "threshold": 0.5,
+            "tn": 6317,
+            "fp": 993,
+            "fn": 352,
+            "tp": 576
+          },
+          {
+            "threshold": 0.55,
+            "tn": 6483,
+            "fp": 827,
+            "fn": 366,
+            "tp": 562
+          },
+          {
+            "threshold": 0.6,
+            "tn": 6483,
+            "fp": 827,
+            "fn": 366,
+            "tp": 562
+          },
+          {
+            "threshold": 0.65,
+            "tn": 6614,
+            "fp": 696,
+            "fn": 389,
+            "tp": 539
+          },
+          {
+            "threshold": 0.7,
+            "tn": 6684,
+            "fp": 626,
+            "fn": 429,
+            "tp": 499
+          },
+          {
+            "threshold": 0.75,
+            "tn": 6704,
+            "fp": 606,
+            "fn": 430,
+            "tp": 498
+          },
+          {
+            "threshold": 0.8,
+            "tn": 6932,
+            "fp": 378,
+            "fn": 519,
+            "tp": 409
+          },
+          {
+            "threshold": 0.85,
+            "tn": 7076,
+            "fp": 234,
+            "fn": 591,
+            "tp": 337
+          },
+          {
+            "threshold": 0.9,
+            "tn": 7228,
+            "fp": 82,
+            "fn": 737,
+            "tp": 191
+          },
+          {
+            "threshold": 0.95,
+            "tn": 7292,
+            "fp": 18,
+            "fn": 866,
+            "tp": 62
+          }
+        ]
+      },
+      {
+        "id": "importance",
+        "kind": "bar",
+        "title": "What the tree relies on",
+        "caption": "Economic context at the time of the call dominates. When a campaign runs matters more than who is called.",
+        "format": "percent",
+        "items": [
+          {
+            "label": "Number employed",
+            "value": 0.6194
+          },
+          {
+            "label": "Consumer confidence index",
+            "value": 0.1202
+          },
+          {
+            "label": "Euribor 3-month rate",
+            "value": 0.0615
+          },
+          {
+            "label": "Consumer price index",
+            "value": 0.0427
+          },
+          {
+            "label": "Age",
+            "value": 0.0347
+          },
+          {
+            "label": "Days since previous-campaign contact",
+            "value": 0.0301
+          },
+          {
+            "label": "Contacts this campaign",
+            "value": 0.0226
+          },
+          {
+            "label": "Credit in default?",
+            "value": 0.0128
+          },
+          {
+            "label": "Education",
+            "value": 0.01
+          },
+          {
+            "label": "Previous campaign outcome",
+            "value": 0.01
+          }
+        ]
+      },
+      {
+        "id": "rate-month",
+        "kind": "bar",
+        "title": "Purchase rate by month of the call",
+        "caption": "Base rate across all calls: 11.3%.",
+        "format": "percent",
+        "reference": {
+          "value": 0.1127,
+          "label": "Base rate"
+        },
+        "items": [
+          {
+            "label": "Mar",
+            "value": 0.5055
+          },
+          {
+            "label": "Apr",
+            "value": 0.2048
+          },
+          {
+            "label": "May",
+            "value": 0.0643
+          },
+          {
+            "label": "Jun",
+            "value": 0.1051
+          },
+          {
+            "label": "Jul",
+            "value": 0.0905
+          },
+          {
+            "label": "Aug",
+            "value": 0.106
+          },
+          {
+            "label": "Sep",
+            "value": 0.4491
+          },
+          {
+            "label": "Oct",
+            "value": 0.4387
+          },
+          {
+            "label": "Nov",
+            "value": 0.1014
+          },
+          {
+            "label": "Dec",
+            "value": 0.489
+          }
+        ]
+      },
+      {
+        "id": "rate-poutcome",
+        "kind": "bar",
+        "title": "Purchase rate by previous campaign outcome",
+        "caption": "Customers who bought last time are by far the likeliest to buy again.",
+        "format": "percent",
+        "reference": {
+          "value": 0.1127,
+          "label": "Base rate"
+        },
+        "items": [
+          {
+            "label": "Success",
+            "value": 0.6511
+          },
+          {
+            "label": "Failure",
+            "value": 0.1423
+          },
+          {
+            "label": "Nonexistent",
+            "value": 0.0883
+          }
+        ]
+      },
+      {
+        "id": "comparison",
+        "kind": "table",
+        "title": "Default vs pre-pruned vs post-pruned (held-out test set)",
+        "caption": "The pre-pruned tree was chosen on validation PR-AUC.",
+        "columns": [
+          {
+            "key": "model",
+            "label": "Model"
+          },
+          {
+            "key": "leaves",
+            "label": "Leaves",
+            "format": "integer"
+          },
+          {
+            "key": "precision",
+            "label": "Precision",
+            "format": "percent"
+          },
+          {
+            "key": "recall",
+            "label": "Recall",
+            "format": "percent"
+          },
+          {
+            "key": "pr_auc",
+            "label": "PR-AUC",
+            "format": "number"
+          }
+        ],
+        "rows": [
+          {
+            "model": "Default tree",
+            "accuracy": 0.8457,
+            "recall": 0.3017,
+            "precision": 0.3101,
+            "f1": 0.3058,
+            "roc_auc": 0.6102,
+            "pr_auc": 0.1737,
+            "leaves": 4581,
+            "depth": 47
+          },
+          {
+            "model": "Pre-pruned tree",
+            "accuracy": 0.8683,
+            "recall": 0.5808,
+            "precision": 0.4364,
+            "f1": 0.4984,
+            "roc_auc": 0.7923,
+            "pr_auc": 0.4519,
+            "leaves": 95,
+            "depth": 10
+          },
+          {
+            "model": "Post-pruned tree",
+            "accuracy": 0.8694,
+            "recall": 0.5894,
+            "precision": 0.4404,
+            "f1": 0.5041,
+            "roc_auc": 0.7879,
+            "pr_auc": 0.4418,
+            "leaves": 75,
+            "depth": 16
+          }
+        ],
+        "highlight": {
+          "key": "model",
+          "value": "Pre-pruned tree"
+        }
+      }
+    ]
+  },
+  "predictions": [
+    {
+      "task": "classification",
+      "score": 0.9752,
+      "score_label": "Purchase probability",
+      "threshold": 0.65,
+      "positive": true,
+      "outcome": "Likely to buy",
+      "explanation": {
+        "kind": "path",
+        "title": "How the tree decided",
+        "value_label": "Purchase rate of training customers at this step",
+        "steps": [
+          {
+            "label": "Number employed ≤ 5,088 thousand",
+            "field": "nr_employed",
+            "value": 0.4377,
+            "count": 2986
+          },
+          {
+            "label": "Customer was contacted in a previous campaign",
+            "field": "days_since_last_contact",
+            "value": 0.6774,
+            "count": 778
+          },
+          {
+            "label": "Contact weekday: not Mon",
+            "field": "day_of_week",
+            "value": 0.7161,
+            "count": 627
+          },
+          {
+            "label": "Number employed ≤ 5,050 thousand",
+            "field": "nr_employed",
+            "value": 0.7525,
+            "count": 505
+          },
+          {
+            "label": "Euribor 3-month rate ≤ 0.72 %",
+            "field": "euribor3m",
+            "value": 0.8333,
+            "count": 186
+          }
+        ]
+      },
+      "model_version": "pre-pruned-tree-26aa6180"
+    },
+    {
+      "task": "classification",
+      "score": 0.9392,
+      "score_label": "Purchase probability",
+      "threshold": 0.65,
+      "positive": true,
+      "outcome": "Likely to buy",
+      "explanation": {
+        "kind": "path",
+        "title": "How the tree decided",
+        "value_label": "Purchase rate of training customers at this step",
+        "steps": [
+          {
+            "label": "Number employed ≤ 5,088 thousand",
+            "field": "nr_employed",
+            "value": 0.4377,
+            "count": 2986
+          },
+          {
+            "label": "Customer was never contacted in a previous campaign",
+            "field": "days_since_last_contact",
+            "value": 0.3533,
+            "count": 2208
+          },
+          {
+            "label": "Contact channel: not Telephone",
+            "field": "contact",
+            "value": 0.378,
+            "count": 1836
+          },
+          {
+            "label": "Consumer price index > 93.17",
+            "field": "cons_price_idx",
+            "value": 0.4689,
+            "count": 610
+          },
+          {
+            "label": "Previous campaign outcome: not Failure",
+            "field": "poutcome",
+            "value": 0.5618,
+            "count": 356
+          },
+          {
+            "label": "Contacts this campaign ≤ 1.5",
+            "field": "campaign",
+            "value": 0.6623,
+            "count": 151
+          }
+        ]
+      },
+      "model_version": "pre-pruned-tree-26aa6180"
+    },
+    {
+      "task": "classification",
+      "score": 0.6424,
+      "score_label": "Purchase probability",
+      "threshold": 0.65,
+      "positive": false,
+      "outcome": "Unlikely to buy",
+      "explanation": {
+        "kind": "path",
+        "title": "How the tree decided",
+        "value_label": "Purchase rate of training customers at this step",
+        "steps": [
+          {
+            "label": "Number employed > 5,088 thousand",
+            "field": "nr_employed",
+            "value": 0.068,
+            "count": 21726
+          },
+          {
+            "label": "Consumer confidence index > -46.65",
+            "field": "cons_conf_idx",
+            "value": 0.0569,
+            "count": 20079
+          },
+          {
+            "label": "Consumer price index ≤ 93.96",
+            "field": "cons_price_idx",
+            "value": 0.0689,
+            "count": 12818
+          },
+          {
+            "label": "Customer was never contacted in a previous campaign",
+            "field": "days_since_last_contact",
+            "value": 0.0669,
+            "count": 12707
+          },
+          {
+            "label": "Euribor 3-month rate ≤ 1.29 %",
+            "field": "euribor3m",
+            "value": 0.1011,
+            "count": 1543
+          },
+          {
+            "label": "Contacts this campaign ≤ 5.5",
+            "field": "campaign",
+            "value": 0.1116,
+            "count": 1371
+          },
+          {
+            "label": "Contact weekday: not Thu",
+            "field": "day_of_week",
+            "value": 0.1244,
+            "count": 1053
+          },
+          {
+            "label": "Education: not Basic (9 years)",
+            "field": "education",
+            "value": 0.1352,
+            "count": 873
+          },
+          {
+            "label": "Age ≤ 37.5 years",
+            "field": "age",
+            "value": 0.1615,
+            "count": 514
+          },
+          {
+            "label": "Euribor 3-month rate ≤ 1.28 %",
+            "field": "euribor3m",
+            "value": 0.1857,
+            "count": 350
+          }
+        ]
+      },
+      "model_version": "pre-pruned-tree-26aa6180"
+    },
+    {
+      "task": "classification",
+      "score": 0.0,
+      "score_label": "Purchase probability",
+      "threshold": 0.65,
+      "positive": false,
+      "outcome": "Unlikely to buy",
+      "explanation": {
+        "kind": "path",
+        "title": "How the tree decided",
+        "value_label": "Purchase rate of training customers at this step",
+        "steps": [
+          {
+            "label": "Number employed > 5,088 thousand",
+            "field": "nr_employed",
+            "value": 0.068,
+            "count": 21726
+          },
+          {
+            "label": "Consumer confidence index > -46.65",
+            "field": "cons_conf_idx",
+            "value": 0.0569,
+            "count": 20079
+          },
+          {
+            "label": "Consumer price index > 93.96",
+            "field": "cons_price_idx",
+            "value": 0.0357,
+            "count": 7261
+          },
+          {
+            "label": "Euribor 3-month rate ≤ 4.86 %",
+            "field": "euribor3m",
+            "value": 0.0278,
+            "count": 2946
+          },
+          {
+            "label": "Contacts this campaign ≤ 5.5",
+            "field": "campaign",
+            "value": 0.0265,
+            "count": 2791
+          },
+          {
+            "label": "Age > 40.5 years",
+            "field": "age",
+            "value": 0.033,
+            "count": 1305
+          },
+          {
+            "label": "Housing loan: not Yes",
+            "field": "housing",
+            "value": 0.0245,
+            "count": 693
+          },
+          {
+            "label": "Age ≤ 46.5 years",
+            "field": "age",
+            "value": 0.0065,
+            "count": 307
+          },
+          {
+            "label": "Contact weekday: not Tue",
+            "field": "day_of_week",
+            "value": 0.0,
+            "count": 187
+          }
+        ]
+      },
+      "model_version": "pre-pruned-tree-26aa6180"
+    },
+    {
+      "task": "classification",
+      "score": 0.3384,
+      "score_label": "Purchase probability",
+      "threshold": 0.65,
+      "positive": false,
+      "outcome": "Unlikely to buy",
+      "explanation": {
+        "kind": "path",
+        "title": "How the tree decided",
+        "value_label": "Purchase rate of training customers at this step",
+        "steps": [
+          {
+            "label": "Number employed > 5,088 thousand",
+            "field": "nr_employed",
+            "value": 0.068,
+            "count": 21726
+          },
+          {
+            "label": "Consumer confidence index ≤ -46.65",
+            "field": "cons_conf_idx",
+            "value": 0.2034,
+            "count": 1647
+          },
+          {
+            "label": "Credit in default: not Unknown",
+            "field": "default",
+            "value": 0.2263,
+            "count": 1432
+          },
+          {
+            "label": "Previous campaign outcome: not Failure",
+            "field": "poutcome",
+            "value": 0.2582,
+            "count": 1131
+          },
+          {
+            "label": "Contact month: not Mar",
+            "field": "month",
+            "value": 0.2271,
+            "count": 982
+          },
+          {
+            "label": "Euribor 3-month rate > 1.38 %",
+            "field": "euribor3m",
+            "value": 0.1864,
+            "count": 826
+          },
+          {
+            "label": "Age > 30.5 years",
+            "field": "age",
+            "value": 0.1497,
+            "count": 668
+          },
+          {
+            "label": "Age ≤ 49.5 years",
+            "field": "age",
+            "value": 0.1038,
+            "count": 520
+          },
+          {
+            "label": "Education: not University degree",
+            "field": "education",
+            "value": 0.0792,
+            "count": 366
+          },
+          {
+            "label": "Age ≤ 41.5 years",
+            "field": "age",
+            "value": 0.061,
+            "count": 246
+          }
+        ]
+      },
+      "model_version": "pre-pruned-tree-26aa6180"
+    },
+    {
+      "task": "classification",
+      "score": 0.9752,
+      "score_label": "Purchase probability",
+      "threshold": 0.65,
+      "positive": true,
+      "outcome": "Likely to buy",
+      "explanation": {
+        "kind": "path",
+        "title": "How the tree decided",
+        "value_label": "Purchase rate of training customers at this step",
+        "steps": [
+          {
+            "label": "Number employed ≤ 5,088 thousand",
+            "field": "nr_employed",
+            "value": 0.4377,
+            "count": 2986
+          },
+          {
+            "label": "Customer was contacted in a previous campaign",
+            "field": "days_since_last_contact",
+            "value": 0.6774,
+            "count": 778
+          },
+          {
+            "label": "Contact weekday: not Mon",
+            "field": "day_of_week",
+            "value": 0.7161,
+            "count": 627
+          },
+          {
+            "label": "Number employed ≤ 5,050 thousand",
+            "field": "nr_employed",
+            "value": 0.7525,
+            "count": 505
+          },
+          {
+            "label": "Euribor 3-month rate ≤ 0.72 %",
+            "field": "euribor3m",
+            "value": 0.8333,
+            "count": 186
+          }
+        ]
+      },
+      "model_version": "pre-pruned-tree-26aa6180"
+    }
+  ]
+}
