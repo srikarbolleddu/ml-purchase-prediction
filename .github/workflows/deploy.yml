@@ -6,6 +6,8 @@ name: Deploy
 on:
   push:
     branches: [main]
+    # The demo page, docs and training code don't change the API image.
+    paths-ignore: ["web/**", "docs/**", "reports/**", "training/**", "**/*.md", ".github/workflows/pages.yml"]
   workflow_dispatch:
 
 permissions:

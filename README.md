@@ -4,8 +4,9 @@ Will a bank customer buy a term deposit if we call them? A **pruned decision tre
 41,188 real marketing calls, served as a **live demo API** with an interactive UI. You can change a
 customer's profile and see the probability, plus the exact tree rules that produced it.
 
-- **Live demo:** standalone UI on GitHub Pages (`web/`), and embedded on
-  [srikarbolleddu.com](https://srikarbolleddu.com/projects/purchase-prediction-system)
+- **Live demo:** [srikarbolleddu.github.io/ml-purchase-prediction](https://srikarbolleddu.github.io/ml-purchase-prediction/)
+  (standalone, from `web/`), also embedded in the
+  [case study on srikarbolleddu.com](https://srikarbolleddu.com/projects/purchase-prediction-system)
 - **Stack:** scikit-learn · FastAPI · AWS Lambda (container) · API Gateway · React (Vite)
 
 > Capstone project, UT Austin Post-Graduate Program in AI & Machine Learning. Rebuilt from
@@ -63,6 +64,10 @@ uv sync
 uv run python training/train.py         # downloads the pinned dataset (sha256-checked) and retrains
 uv run fastapi dev app/main.py          # API on http://localhost:8000/api/v1/docs
 ```
+
+Demo page: `cd web && pnpm install && VITE_DEMO_API_URL=http://localhost:8000/api/v1 pnpm dev`
+(leave the variable out to use the recorded responses in `web/src/fixture.json`; refresh them after
+retraining with `uv run python scripts/export_web_fixture.py`, which a test enforces).
 
 Checks: `uv run ruff check . && uv run ty check && uv run coverage run -m pytest && uv run coverage report`.
 The tests include **golden predictions**: the shipped model must reproduce the outputs recorded at
