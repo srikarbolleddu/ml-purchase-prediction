@@ -1,8 +1,8 @@
 """Smoke-test a deployed demo API: `python3 scripts/smoke_http.py https://<api-id>.execute-api...`"""
 
 import json
-import time
 import sys
+import time
 import urllib.error
 import urllib.request
 from typing import Any
