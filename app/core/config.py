@@ -14,6 +14,7 @@ class Settings(BaseSettings):
         "https://srikarbolleddu.com",
         "https://www.srikarbolleddu.com",
         "https://srikarbolleddu.github.io",
+        "https://d25jb32a4giwex.cloudfront.net",  # the portfolio's dev site
     ]
     # Largest accepted request body; a full prediction request is well under 1KB.
     MAX_BODY_BYTES: int = 4096
