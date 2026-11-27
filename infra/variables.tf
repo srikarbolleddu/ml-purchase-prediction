@@ -51,6 +51,7 @@ variable "cors_allowed_origins" {
     "https://srikarbolleddu.com",
     "https://www.srikarbolleddu.com",
     "https://srikarbolleddu.github.io",
+    "https://d25jb32a4giwex.cloudfront.net", # the portfolio's dev site
     "http://localhost:3000",
     "http://localhost:5173",
   ]
