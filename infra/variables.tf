@@ -28,20 +28,20 @@ variable "memory_size" {
 
 variable "timeout" {
   type        = number
-  description = "Seconds. A prediction takes ~20ms warm; this only bounds a stuck request."
-  default     = 15
+  description = "Seconds. A prediction takes ~20ms warm (init is billed separately); this only bounds a stuck request."
+  default     = 8
 }
 
 variable "throttle_rate_per_second" {
   type        = number
-  description = "Steady-state requests/second across ALL callers (API Gateway stage throttle)."
-  default     = 5
+  description = "Steady-state requests/second across ALL callers (API Gateway stage throttle). Concurrency ~= rps x duration, so this keeps the demo to a sliver of the account's shared Lambda pool and caps worst-case abuse cost at a few dollars a month."
+  default     = 2
 }
 
 variable "throttle_burst" {
   type        = number
-  description = "Short burst allowance above the steady rate. Keeps concurrent Lambdas to a handful."
-  default     = 10
+  description = "Short burst allowance above the steady rate. Even if every burst request hits a cold start, at most this many Lambdas run at once."
+  default     = 4
 }
 
 variable "cors_allowed_origins" {

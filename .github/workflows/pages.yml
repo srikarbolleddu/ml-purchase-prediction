@@ -1,7 +1,7 @@
 name: Demo page
 
 # Publishes web/ to GitHub Pages (free for public repos).
-# Set the repo variable DEMO_API_URL to the deployed API (…/api/v1) to make the page live; without it
+# Set the repo variable DEMO_API_URL to the deployed API's base URL to make the page live; without it
 # the page shows predictions recorded from the model (web/src/fixture.json).
 on:
   push:
@@ -38,7 +38,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
         env:
-          VITE_DEMO_API_URL: ${{ vars.DEMO_API_URL }}
+          # DEMO_API_URL is the API's base URL (also used by Deploy's smoke test); empty = recorded mode.
+          VITE_DEMO_API_URL: ${{ vars.DEMO_API_URL && format('{0}/api/v1', vars.DEMO_API_URL) || '' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: web/dist

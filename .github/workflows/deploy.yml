@@ -40,7 +40,8 @@ jobs:
         env:
           IMAGE: ${{ steps.ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ github.sha }}
         run: |
-          docker build -f Dockerfile.lambda -t "$IMAGE" .
+          # --provenance=false: Lambda rejects OCI image indexes (which provenance attestations create).
+          docker build --provenance=false --platform linux/amd64 -f Dockerfile.lambda -t "$IMAGE" .
           docker push "$IMAGE"
 
       - name: Update Lambda function

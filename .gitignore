@@ -32,3 +32,5 @@ infra/crash.log
 .data/
 web/node_modules/
 web/dist/
+infra/tfplan
+*.tfplan
